@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import TopNav from "./components/TopNav";
+import SiteFooter from "./components/SiteFooter";
 
 const satoshi = localFont({
   src: [
@@ -40,6 +41,7 @@ export default function RootLayout({
       <body className={`${satoshi.variable} antialiased`}>
         <TopNav />
         <div className="pageShell">{children}</div>
+        <SiteFooter />
       </body>
     </html>
   );

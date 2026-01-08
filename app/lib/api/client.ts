@@ -21,6 +21,7 @@ type RequestOptions = {
   headers?: Record<string, string>;
   body?: unknown;
   signal?: AbortSignal;
+  credentials?: RequestCredentials;
 };
 
 export async function apiFetch<T>(path: string, opts: RequestOptions = {}): Promise<T> {
@@ -36,6 +37,7 @@ export async function apiFetch<T>(path: string, opts: RequestOptions = {}): Prom
     headers,
     body: opts.body === undefined ? undefined : JSON.stringify(opts.body),
     signal: opts.signal,
+    credentials: opts.credentials,
     cache: "no-store",
   });
 

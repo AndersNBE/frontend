@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { Market } from "./page";
 
 type CategoryKey = "all" | "politics" | "sports" | "finance" | "entertainment";
@@ -14,8 +15,9 @@ const categoryMeta: Record<CategoryKey, { label: string; icon: string }> = {
   entertainment: { label: "Entertainment", icon: "🎬" },
 };
 
-function toOre(price: number) {
-  return Math.round(price * 100);
+function formatDkk(price: number) {
+  if (!Number.isFinite(price)) return "";
+  return `${price.toFixed(2).replace(".", ",")} DKK`;
 }
 
 function formatKrShort(value: number) {
@@ -41,9 +43,16 @@ export default function MarketsView({
   initialMarkets: Market[];
   initialError: string | null;
 }) {
+  const searchParams = useSearchParams();
   const [activeCat, setActiveCat] = useState<CategoryKey>("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<"trending" | "title">("trending");
+
+  const queryParam = (searchParams.get("q") ?? "").trim();
+
+  useEffect(() => {
+    setQuery(queryParam);
+  }, [queryParam]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -149,11 +158,11 @@ export default function MarketsView({
               <div className="priceRow">
                 <span className="priceBtn priceYes">
                   <span>Yes</span>
-                  <span>{toOre(m.yesPrice)} øre</span>
+                  <span>{formatDkk(m.yesPrice)}</span>
                 </span>
                 <span className="priceBtn priceNo">
                   <span>No</span>
-                  <span>{toOre(m.noPrice)} øre</span>
+                  <span>{formatDkk(m.noPrice)}</span>
                 </span>
               </div>
 
