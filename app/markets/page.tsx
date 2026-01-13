@@ -1,5 +1,6 @@
-import MarketsView from "./MarketsView";
+import { Suspense } from "react";
 import { apiFetch } from "../lib/api/client";
+import MarketsClientPage from "./ClientPage";
 
 type Category = "politics" | "sports" | "finance" | "entertainment";
 
@@ -24,5 +25,9 @@ export default async function MarketsPage() {
     error = e?.message ?? "Unknown error";
   }
 
-  return <MarketsView initialMarkets={markets} initialError={error} />;
+  return (
+    <Suspense fallback={null}>
+      <MarketsClientPage initialMarkets={markets} initialError={error} />
+    </Suspense>
+  );
 }
