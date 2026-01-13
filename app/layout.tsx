@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Suspense } from "react";
 import "./globals.css";
 import TopNav from "./components/TopNav";
 import SiteFooter from "./components/SiteFooter";
@@ -39,8 +40,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${satoshi.variable} antialiased`}>
-        <TopNav />
+        <Suspense fallback={null}>
+          <TopNav />
+        </Suspense>
+
         <div className="pageShell">{children}</div>
+
         <SiteFooter />
       </body>
     </html>
