@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 function cx(...classes: Array<string | false | null | undefined>) {
@@ -10,8 +10,6 @@ function cx(...classes: Array<string | false | null | undefined>) {
 
 export default function TopNav() {
   const pathname = usePathname();
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const isMarkets = pathname === "/" || pathname.startsWith("/markets");
   const topBarInnerRef = useRef<HTMLDivElement>(null);
   const topLeftRef = useRef<HTMLDivElement>(null);
@@ -19,7 +17,6 @@ export default function TopNav() {
   const brandRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [search, setSearch] = useState("");
   const [navCollapsed, setNavCollapsed] = useState(false);
 
   useEffect(() => {
@@ -29,11 +26,6 @@ export default function TopNav() {
   useEffect(() => {
     if (!navCollapsed) setMenuOpen(false);
   }, [navCollapsed]);
-
-  useEffect(() => {
-    const q = searchParams.get("q") ?? "";
-    setSearch(q);
-  }, [searchParams]);
 
   useLayoutEffect(() => {
     const topBarInner = topBarInnerRef.current;
@@ -92,19 +84,6 @@ export default function TopNav() {
     { href: "/markets?cat=entertainment", label: "Entertainment" },
   ];
 
-  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const trimmed = search.trim();
-    const params = new URLSearchParams();
-    const cat = searchParams.get("cat");
-
-    if (cat) params.set("cat", cat);
-    if (trimmed) params.set("q", trimmed);
-
-    const queryString = params.toString();
-    router.push(queryString ? `/markets?${queryString}` : "/markets");
-  };
-
   return (
     <header className="topBar">
       <div
@@ -152,18 +131,6 @@ export default function TopNav() {
             Get Started
           </Link>
         </div>
-      </div>
-
-      <div className="topSearchRow">
-        <form className="topSearch" role="search" onSubmit={handleSearchSubmit}>
-          <span className="topSearchIcon" aria-hidden="true">⌕</span>
-          <input
-            className="topSearchInput"
-            placeholder="Search markets..."
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-        </form>
       </div>
 
       <div id="navMenu" className={menuOpen ? "navMenu navMenuOpen" : "navMenu"}>
