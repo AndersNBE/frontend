@@ -144,16 +144,6 @@ export default function TopNav() {
         </div>
 
         <div ref={topRightRef} className="topRight">
-          <form className="topSearch" role="search" onSubmit={handleSearchSubmit}>
-            <span className="topSearchIcon" aria-hidden="true">⌕</span>
-            <input
-              className="topSearchInput"
-              placeholder="Search markets..."
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-            />
-          </form>
-
           <Link href="/signin" className="topTextLink">
             Sign In
           </Link>
@@ -162,6 +152,18 @@ export default function TopNav() {
             Get Started
           </Link>
         </div>
+      </div>
+
+      <div className="topSearchRow">
+        <form className="topSearch" role="search" onSubmit={handleSearchSubmit}>
+          <span className="topSearchIcon" aria-hidden="true">⌕</span>
+          <input
+            className="topSearchInput"
+            placeholder="Search markets..."
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+        </form>
       </div>
 
       <div id="navMenu" className={menuOpen ? "navMenu navMenuOpen" : "navMenu"}>
