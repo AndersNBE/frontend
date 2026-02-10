@@ -100,6 +100,16 @@ export default function MarketsView({
       </div>
 
       <div className="controlsRow">
+        <div className="searchBar">
+          <span aria-hidden="true" style={{ color: "var(--muted)" }}>⌕</span>
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search markets..."
+            aria-label="Search markets"
+          />
+        </div>
+
         <div className="sortBox">
           <select value={sort} onChange={(e) => setSort(e.target.value as any)} aria-label="Sort">
             <option value="trending">Trending</option>
