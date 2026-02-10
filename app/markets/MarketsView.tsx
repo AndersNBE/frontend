@@ -101,9 +101,6 @@ export default function MarketsView({
 
       <div className="controlsRow">
         <div className="searchBar">
-          <span style={{ fontSize: 12, fontWeight: 700, color: "#0ea765" }}>
-            SEARCH BAR HERE
-          </span>
           <span aria-hidden="true" style={{ color: "var(--muted)" }}>⌕</span>
           <input
             value={query}
