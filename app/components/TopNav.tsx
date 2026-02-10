@@ -30,6 +30,11 @@ export default function TopNav() {
     if (!navCollapsed) setMenuOpen(false);
   }, [navCollapsed]);
 
+  useEffect(() => {
+    const q = searchParams.get("q") ?? "";
+    setSearch(q);
+  }, [searchParams]);
+
   useLayoutEffect(() => {
     const topBarInner = topBarInnerRef.current;
     const topLeft = topLeftRef.current;
@@ -175,7 +180,3 @@ export default function TopNav() {
     </header>
   );
 }
-  useEffect(() => {
-    const q = searchParams.get("q") ?? "";
-    setSearch(q);
-  }, [searchParams]);
