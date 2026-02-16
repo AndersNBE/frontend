@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useLayoutEffect, useRef, useState } from "react";
-import { createSupabaseBrowserClient } from "../lib/supabase/client";
 
 function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
@@ -14,7 +13,6 @@ type TopNavProps = {
 };
 
 export default function TopNav({ isAuthenticated = false }: TopNavProps) {
-  const router = useRouter();
   const pathname = usePathname();
   const isMarkets = pathname === "/" || pathname.startsWith("/markets");
   const topBarInnerRef = useRef<HTMLDivElement>(null);
@@ -24,20 +22,8 @@ export default function TopNav({ isAuthenticated = false }: TopNavProps) {
   const navRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [navCollapsed, setNavCollapsed] = useState(false);
-  const [signingOut, setSigningOut] = useState(false);
 
   const closeMenu = () => setMenuOpen(false);
-
-  const handleSignOut = async () => {
-    setSigningOut(true);
-    const supabase = createSupabaseBrowserClient();
-    const { error } = await supabase.auth.signOut();
-    setSigningOut(false);
-    if (error) return;
-    closeMenu();
-    router.replace("/signin");
-    router.refresh();
-  };
 
   useLayoutEffect(() => {
     const topBarInner = topBarInnerRef.current;
@@ -137,9 +123,9 @@ export default function TopNav({ isAuthenticated = false }: TopNavProps) {
 
         <div ref={topRightRef} className="topRight">
           {isAuthenticated ? (
-            <button className="topTextLink" type="button" onClick={handleSignOut} disabled={signingOut}>
-              {signingOut ? "Signing out..." : "Sign Out"}
-            </button>
+            <Link href="/account" className="btnPrimary" onClick={closeMenu}>
+              Account
+            </Link>
           ) : (
             <>
               <Link href="/signin" className="topTextLink" onClick={closeMenu}>
@@ -165,6 +151,20 @@ export default function TopNav({ isAuthenticated = false }: TopNavProps) {
             {item.label}
           </Link>
         ))}
+        {isAuthenticated ? (
+          <Link href="/account" className="navMenuLink" onClick={closeMenu}>
+            Account
+          </Link>
+        ) : (
+          <>
+            <Link href="/signin" className="navMenuLink" onClick={closeMenu}>
+              Sign In
+            </Link>
+            <Link href="/signup" className="navMenuLink" onClick={closeMenu}>
+              Get Started
+            </Link>
+          </>
+        )}
       </div>
     </header>
   );

@@ -23,7 +23,7 @@ export function normalizeNextPath(path: string | null | undefined, fallback = "/
 
 export function buildBrowserCallbackUrl(
   nextPath = "/markets",
-  flow: "magiclink" | "signup" | null = null,
+  flow: "magiclink" | "signup" | "recovery" | null = null,
 ): string {
   const origin = typeof window !== "undefined" ? window.location.origin : defaultOrigin();
   const callbackUrl = new URL("/auth/callback", origin);

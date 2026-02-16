@@ -89,6 +89,11 @@ export async function GET(request: Request) {
         error: "Open the one-time link on the same device where you requested it.",
       });
     }
+    if (flow === "recovery") {
+      return toSigninRedirect(request, {
+        error: "Open the password reset link on the same device where you requested it.",
+      });
+    }
 
     return toSigninRedirect(request, { info: SIGNUP_CONFIRMED_INFO });
   }

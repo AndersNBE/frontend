@@ -2,11 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ApiError, apiFetch } from "../lib/api/client";
-
-type ResetResponse = {
-  message?: string;
-};
+import { createSupabaseBrowserClient } from "../lib/supabase/client";
+import { buildBrowserCallbackUrl } from "../lib/supabase/redirect";
 
 export default function ForgotPasswordPage() {
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
@@ -27,14 +24,20 @@ export default function ForgotPasswordPage() {
     }
 
     try {
-      await apiFetch<ResetResponse>("/auth/forgot-password", {
-        method: "POST",
-        body: { email },
-        credentials: "include",
+      const supabase = createSupabaseBrowserClient();
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: buildBrowserCallbackUrl("/account/reset-password", "recovery"),
       });
+
+      if (resetError) {
+        setError(resetError.message);
+        setStatus("idle");
+        return;
+      }
+
       setStatus("success");
     } catch (err) {
-      const message = err instanceof ApiError ? err.message : "Request failed. Try again.";
+      const message = err instanceof Error ? err.message : "Request failed. Try again.";
       setError(message);
       setStatus("idle");
     }
