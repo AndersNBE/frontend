@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiFetch } from "../lib/api/client";
-import MarketsView from "./MarketsView";
-import type { Market } from "../lib/markets/types";
+import { apiFetch } from "../../lib/api/client";
+import type { Market } from "../../lib/markets/types";
+import MarketDetailView from "./MarketDetailView";
 
-export default function MarketsClientPage() {
-  const [markets, setMarkets] = useState<Market[]>([]);
+export default function MarketDetailClientPage({ id }: { id: string }) {
+  const [market, setMarket] = useState<Market | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -14,9 +14,9 @@ export default function MarketsClientPage() {
 
     const load = async () => {
       try {
-        const data = await apiFetch<Market[]>("/markets");
+        const data = await apiFetch<Market>(`/markets/${encodeURIComponent(id)}`);
         if (!cancelled) {
-          setMarkets(data);
+          setMarket(data);
           setError(null);
         }
       } catch (e: unknown) {
@@ -30,7 +30,7 @@ export default function MarketsClientPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [id]);
 
-  return <MarketsView initialMarkets={markets} initialError={error} />;
+  return <MarketDetailView market={market} error={error} />;
 }

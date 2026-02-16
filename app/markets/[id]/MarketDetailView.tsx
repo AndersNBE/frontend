@@ -3,19 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-
-type Category = "politics" | "sports" | "finance" | "entertainment";
-
-type Market = {
-  id: string;
-  title: string;
-  status: "open" | "closed" | "settled";
-  yesPrice: number;
-  noPrice: number;
-  description?: string;
-  category?: Category;
-  volumeKr?: number;
-};
+import type { Market } from "../../lib/markets/types";
 
 type OrderBookRow = {
   price: number;

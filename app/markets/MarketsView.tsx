@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import type { Market } from "./page";
+import type { Market } from "../lib/markets/types";
 
 type CategoryKey = "all" | "politics" | "sports" | "finance" | "entertainment";
 
@@ -111,7 +111,11 @@ export default function MarketsView({
         </div>
 
         <div className="sortBox">
-          <select value={sort} onChange={(e) => setSort(e.target.value as any)} aria-label="Sort">
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value === "title" ? "title" : "trending")}
+            aria-label="Sort"
+          >
             <option value="trending">Trending</option>
             <option value="title">Title</option>
           </select>
@@ -125,6 +129,12 @@ export default function MarketsView({
           <div style={{ marginTop: 8, color: "var(--muted)" }}>
             Backend must respond at <code>/markets</code>.
           </div>
+        </div>
+      )}
+
+      {!initialError && initialMarkets.length === 0 && (
+        <div className="card">
+          <strong>Loading markets...</strong>
         </div>
       )}
 

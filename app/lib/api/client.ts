@@ -10,11 +10,7 @@ export class ApiError extends Error {
   }
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-if (!BASE_URL) {
-  throw new Error("Missing NEXT_PUBLIC_API_URL. Add it to .env.local");
-}
+const INTERNAL_API_PREFIX = "/api/backend";
 
 type RequestOptions = {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -24,8 +20,27 @@ type RequestOptions = {
   credentials?: RequestCredentials;
 };
 
+function readErrorMessage(payload: unknown): string | null {
+  if (typeof payload === "string" && payload.length > 0) {
+    return payload;
+  }
+
+  if (
+    payload &&
+    typeof payload === "object" &&
+    "detail" in payload &&
+    typeof payload.detail === "string" &&
+    payload.detail.length > 0
+  ) {
+    return payload.detail;
+  }
+
+  return null;
+}
+
 export async function apiFetch<T>(path: string, opts: RequestOptions = {}): Promise<T> {
-  const url = `${BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const url = `${INTERNAL_API_PREFIX}${normalizedPath}`;
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -49,10 +64,7 @@ export async function apiFetch<T>(path: string, opts: RequestOptions = {}): Prom
     : await resp.text().catch(() => "");
 
   if (!resp.ok) {
-    const msg =
-      typeof payload === "string" && payload.length > 0
-        ? payload
-        : `Request failed: ${resp.status} ${resp.statusText}`;
+    const msg = readErrorMessage(payload) ?? `Request failed: ${resp.status} ${resp.statusText}`;
     throw new ApiError(msg, resp.status, payload);
   }
 
