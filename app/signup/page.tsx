@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { createSupabaseBrowserClient } from "../lib/supabase/client";
-import { buildBrowserCallbackUrl, normalizeNextPath } from "../lib/supabase/redirect";
+import { buildSignupEmailRedirectUrl, normalizeNextPath } from "../lib/supabase/redirect";
 
 function SignUpContent() {
   const router = useRouter();
@@ -38,7 +38,7 @@ function SignUpContent() {
         password,
         options: {
           data: name ? { full_name: name } : undefined,
-          emailRedirectTo: buildBrowserCallbackUrl(nextPath),
+          emailRedirectTo: buildSignupEmailRedirectUrl(),
         },
       });
 
@@ -71,8 +71,8 @@ function SignUpContent() {
         <div className="authHeroGrid" aria-hidden="true" />
 
         <div className="authHeroInner">
-          <span className="authBadge">Foresee Access</span>
-          <h1 className="authTitle">Create your Foresee account</h1>
+          <span className="authBadge">Udfall Access</span>
+          <h1 className="authTitle">Create your Udfall account</h1>
           <p className="authCopy">
             Build watchlists, get instant probability alerts, and move with the best signal in the market.
           </p>
@@ -142,7 +142,7 @@ function SignUpContent() {
               id="email"
               name="email"
               type="email"
-              placeholder="you@foresee.ai"
+              placeholder="you@udfall.com"
               autoComplete="email"
               required
             />

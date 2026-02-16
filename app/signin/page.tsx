@@ -11,6 +11,7 @@ function SignInContent() {
   const searchParams = useSearchParams();
   const nextPath = normalizeNextPath(searchParams.get("next"));
   const callbackError = searchParams.get("error");
+  const callbackInfo = searchParams.get("info");
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -36,7 +37,22 @@ function SignInContent() {
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
 
       if (signInError) {
-        setError(signInError.message);
+        const errorCode = (signInError as { code?: string }).code;
+        const lowerMessage = signInError.message.toLowerCase();
+        const needsConfirmationMessage =
+          errorCode === "email_not_confirmed" ||
+          lowerMessage.includes("email not confirmed") ||
+          lowerMessage.includes("confirm your email");
+        const isInvalidCredentials =
+          errorCode === "invalid_credentials" || lowerMessage.includes("invalid login credentials");
+
+        if (needsConfirmationMessage) {
+          setError("Confirm your email first");
+        } else if (isInvalidCredentials) {
+          setError("Invalid login credentials. If you just signed up, confirm your email first.");
+        } else {
+          setError(signInError.message);
+        }
         setStatus("idle");
         return;
       }
@@ -49,11 +65,6 @@ function SignInContent() {
       setError(message || "Sign-in failed. Try again.");
       setStatus("idle");
     }
-  };
-
-  const handlePasskey = () => {
-    setError(null);
-    setInfo("Passkey sign-in is not configured yet.");
   };
 
   const handleMagicLink = async () => {
@@ -73,7 +84,7 @@ function SignInContent() {
         email,
         options: {
           shouldCreateUser: false,
-          emailRedirectTo: buildBrowserCallbackUrl(nextPath),
+          emailRedirectTo: buildBrowserCallbackUrl(nextPath, "magiclink"),
         },
       });
 
@@ -97,7 +108,7 @@ function SignInContent() {
         <div className="authHeroGrid" aria-hidden="true" />
 
         <div className="authHeroInner">
-          <span className="authBadge">Foresee Access</span>
+          <span className="authBadge">Udfall Access</span>
           <h1 className="authTitle">Sign in to your market desk</h1>
           <p className="authCopy">
             Keep watchlists private, react to probability shifts, and move faster with smart alerts.
@@ -147,9 +158,9 @@ function SignInContent() {
               {error ?? callbackError}
             </div>
           )}
-          {info && (
+          {(info ?? callbackInfo) && (
             <div className="authAlert authAlertInfo" role="status">
-              {info}
+              {info ?? callbackInfo}
             </div>
           )}
           {status === "success" && (
@@ -166,7 +177,7 @@ function SignInContent() {
               id="email"
               name="email"
               type="email"
-              placeholder="you@foresee.ai"
+              placeholder="you@udfall.com"
               autoComplete="email"
               required
             />
@@ -206,9 +217,6 @@ function SignInContent() {
           </div>
 
           <div className="authAltRow">
-            <button className="authAltButton" type="button" onClick={handlePasskey}>
-              Use passkey
-            </button>
             <button className="authAltButton" type="button" onClick={handleMagicLink}>
               One-time link
             </button>
@@ -216,7 +224,7 @@ function SignInContent() {
         </form>
 
         <div className="authFooter">
-          <span>New to Foresee?</span>
+          <span>New to Udfall?</span>
           <Link className="authLinkStrong" href="/signup">
             Create account
           </Link>

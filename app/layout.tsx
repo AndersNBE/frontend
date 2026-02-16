@@ -28,7 +28,7 @@ const satoshi = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Foresee",
+  title: "Udfall",
   description: "Prediction markets",
 };
 

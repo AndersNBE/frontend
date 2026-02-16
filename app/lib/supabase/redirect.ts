@@ -4,8 +4,10 @@ const ALLOWED_REDIRECT_ORIGINS = new Set<string>([
   "https://www.udfall.com",
 ]);
 
+const PRIMARY_APP_ORIGIN = "https://udfall.com";
+
 function defaultOrigin() {
-  return process.env.NODE_ENV === "production" ? "https://udfall.com" : "http://localhost:3000";
+  return process.env.NODE_ENV === "production" ? PRIMARY_APP_ORIGIN : "http://localhost:3000";
 }
 
 function safeRelativePath(path: string | null | undefined): string | null {
@@ -19,11 +21,21 @@ export function normalizeNextPath(path: string | null | undefined, fallback = "/
   return safeRelativePath(path) ?? fallback;
 }
 
-export function buildBrowserCallbackUrl(nextPath = "/markets"): string {
+export function buildBrowserCallbackUrl(
+  nextPath = "/markets",
+  flow: "magiclink" | "signup" | null = null,
+): string {
   const origin = typeof window !== "undefined" ? window.location.origin : defaultOrigin();
   const callbackUrl = new URL("/auth/callback", origin);
   callbackUrl.searchParams.set("next", normalizeNextPath(nextPath));
+  if (flow) {
+    callbackUrl.searchParams.set("flow", flow);
+  }
   return callbackUrl.toString();
+}
+
+export function buildSignupEmailRedirectUrl(): string {
+  return new URL("/auth/callback", PRIMARY_APP_ORIGIN).toString();
 }
 
 export function resolveSafeRedirectUrl(

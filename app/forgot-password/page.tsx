@@ -50,7 +50,7 @@ export default function ForgotPasswordPage() {
           <span className="authBadge">Account Help</span>
           <h1 className="authTitle">Reset your password</h1>
           <p className="authCopy">
-            We will send a secure reset link to the email connected to your Foresee account.
+            We will send a secure reset link to the email connected to your Udfall account.
           </p>
         </div>
 
@@ -111,7 +111,7 @@ export default function ForgotPasswordPage() {
               id="email"
               name="email"
               type="email"
-              placeholder="you@foresee.ai"
+              placeholder="you@udfall.com"
               autoComplete="email"
               required
             />

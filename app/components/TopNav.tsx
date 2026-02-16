@@ -105,8 +105,8 @@ export default function TopNav({ isAuthenticated = false }: TopNavProps) {
         <div ref={topLeftRef} className="topLeft">
           <div ref={brandRef}>
             <Link href="/markets" className="brand">
-              <span className="brandIcon">F</span>
-              <span className="brandName">Foresee</span>
+              <span className="brandIcon">U</span>
+              <span className="brandName">Udfall</span>
             </Link>
           </div>
 

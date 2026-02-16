@@ -32,11 +32,11 @@ export default function SiteFooter() {
       <div className="footerTop">
         <div className="footerBrand">
           <div className="footerBrandMark">
-            <span className="footerBrandIcon">F</span>
-            <span className="footerBrandName">Foresee</span>
+            <span className="footerBrandIcon">U</span>
+            <span className="footerBrandName">Udfall</span>
           </div>
           <div className="footerAddress">
-            Foresee Labs A/S
+            Udfall Labs A/S
             <br />
             Korsdalsvej 135
             <br />
@@ -81,7 +81,7 @@ export default function SiteFooter() {
           <div className="footerCareGrid">
             <div className="footerCareCard">
               <div className="footerCareIcon">18+</div>
-              <p>Du skal vaere over 18 aar for at kunne bruge Foresee.</p>
+              <p>Du skal vaere over 18 aar for at kunne bruge Udfall.</p>
             </div>
             <div className="footerCareCard">
               <div className="footerCareIcon">ROFUS</div>
@@ -93,7 +93,7 @@ export default function SiteFooter() {
             </div>
             <div className="footerCareCard">
               <div className="footerCareIcon">SM</div>
-              <p>Foresee overvages af Spillemyndigheden.</p>
+              <p>Udfall overvages af Spillemyndigheden.</p>
             </div>
           </div>
         </div>

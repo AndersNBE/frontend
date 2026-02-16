@@ -118,7 +118,7 @@ export default function AlertsNewClientPage() {
               </div>
               <div>
                 <span>Support</span>
-                <strong>alerts@foresee.ai</strong>
+                <strong>alerts@udfall.com</strong>
               </div>
             </div>
           </div>
