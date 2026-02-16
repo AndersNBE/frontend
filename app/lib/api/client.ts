@@ -1,4 +1,8 @@
 // app/lib/api/client.ts
+"use client";
+
+import { createSupabaseBrowserClient } from "../supabase/client";
+
 export class ApiError extends Error {
   status: number;
   details?: unknown;
@@ -19,6 +23,25 @@ type RequestOptions = {
   signal?: AbortSignal;
   credentials?: RequestCredentials;
 };
+
+function hasAuthorizationHeader(headers: Record<string, string>): boolean {
+  return Object.keys(headers).some((key) => key.toLowerCase() === "authorization");
+}
+
+async function getSupabaseAccessToken(): Promise<string | null> {
+  try {
+    const supabase = createSupabaseBrowserClient();
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+
+    if (error) return null;
+    return session?.access_token ?? null;
+  } catch {
+    return null;
+  }
+}
 
 function readErrorMessage(payload: unknown): string | null {
   if (typeof payload === "string" && payload.length > 0) {
@@ -46,6 +69,12 @@ export async function apiFetch<T>(path: string, opts: RequestOptions = {}): Prom
     "Content-Type": "application/json",
     ...(opts.headers ?? {}),
   };
+  if (!hasAuthorizationHeader(headers)) {
+    const accessToken = await getSupabaseAccessToken();
+    if (accessToken) {
+      headers.Authorization = `Bearer ${accessToken}`;
+    }
+  }
 
   const resp = await fetch(url, {
     method: opts.method ?? "GET",

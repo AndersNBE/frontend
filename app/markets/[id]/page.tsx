@@ -1,3 +1,4 @@
+import { requireServerUser } from "../../lib/supabase/protected";
 import MarketDetailClientPage from "./ClientPage";
 
 export default async function MarketPage({
@@ -6,5 +7,7 @@ export default async function MarketPage({
   params: Promise<{ id: string }>;
 }) {
   const { id: rawId } = await params;
-  return <MarketDetailClientPage id={decodeURIComponent(rawId)} />;
+  const marketId = decodeURIComponent(rawId);
+  await requireServerUser(`/markets/${encodeURIComponent(marketId)}`);
+  return <MarketDetailClientPage id={marketId} />;
 }
