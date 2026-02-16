@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Suspense } from "react";
 import "./globals.css";
-import TopNav from "./components/TopNav";
+import TopNavServer from "./components/TopNavServer";
 import SiteFooter from "./components/SiteFooter";
 
 const satoshi = localFont({
@@ -41,7 +41,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${satoshi.variable} antialiased`}>
         <Suspense fallback={null}>
-          <TopNav />
+          <TopNavServer />
         </Suspense>
 
         <div className="pageShell">{children}</div>

@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { ApiError, apiFetch } from "../lib/api/client";
-
-type SignInResponse = {
-  redirect?: string;
-};
+import { createSupabaseBrowserClient } from "../lib/supabase/client";
+import { buildBrowserCallbackUrl, normalizeNextPath } from "../lib/supabase/redirect";
 
 export default function SignInPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextPath = normalizeNextPath(searchParams.get("next"));
+  const callbackError = searchParams.get("error");
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -24,7 +24,6 @@ export default function SignInPage() {
     const formData = new FormData(event.currentTarget);
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "");
-    const remember = formData.get("remember") === "on";
 
     if (!email || !password) {
       setError("Enter both email and password.");
@@ -33,18 +32,21 @@ export default function SignInPage() {
     }
 
     try {
-      const response = await apiFetch<SignInResponse>("/auth/login", {
-        method: "POST",
-        body: { email, password, remember },
-        credentials: "include",
-      });
+      const supabase = createSupabaseBrowserClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (signInError) {
+        setError(signInError.message);
+        setStatus("idle");
+        return;
+      }
 
       setStatus("success");
-      const nextPath = typeof response?.redirect === "string" ? response.redirect : "/markets";
-      router.push(nextPath);
+      router.replace(nextPath);
+      router.refresh();
     } catch (err) {
-      const message = err instanceof ApiError ? err.message : "Sign-in failed. Try again.";
-      setError(message);
+      const message = err instanceof Error ? err.message : "Sign-in failed. Try again.";
+      setError(message || "Sign-in failed. Try again.");
       setStatus("idle");
     }
   };
@@ -54,9 +56,38 @@ export default function SignInPage() {
     setInfo("Passkey sign-in is not configured yet.");
   };
 
-  const handleMagicLink = () => {
+  const handleMagicLink = async () => {
+    const emailInput = document.getElementById("email");
+    const email = emailInput instanceof HTMLInputElement ? emailInput.value.trim() : "";
+    if (!email) {
+      setError("Enter your email to receive a one-time link.");
+      setInfo(null);
+      return;
+    }
+
     setError(null);
-    setInfo("One-time link sign-in is not configured yet.");
+    setInfo("Sending one-time link...");
+    try {
+      const supabase = createSupabaseBrowserClient();
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: false,
+          emailRedirectTo: buildBrowserCallbackUrl(nextPath),
+        },
+      });
+
+      if (otpError) {
+        setError(otpError.message);
+        setInfo(null);
+        return;
+      }
+
+      setInfo("One-time link sent. Check your email.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to send one-time link.");
+      setInfo(null);
+    }
   };
 
   return (
@@ -111,9 +142,9 @@ export default function SignInPage() {
         </div>
 
         <form className="authForm" onSubmit={handleSubmit}>
-          {error && (
+          {(error ?? callbackError) && (
             <div className="authAlert" role="alert">
-              {error}
+              {error ?? callbackError}
             </div>
           )}
           {info && (

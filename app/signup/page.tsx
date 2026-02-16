@@ -1,22 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { ApiError, apiFetch } from "../lib/api/client";
-
-type SignUpResponse = {
-  redirect?: string;
-};
+import { createSupabaseBrowserClient } from "../lib/supabase/client";
+import { buildBrowserCallbackUrl, normalizeNextPath } from "../lib/supabase/redirect";
 
 export default function SignUpPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextPath = normalizeNextPath(searchParams.get("next"));
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
+    setInfo(null);
     setStatus("loading");
 
     const formData = new FormData(event.currentTarget);
@@ -31,18 +32,34 @@ export default function SignUpPage() {
     }
 
     try {
-      const response = await apiFetch<SignUpResponse>("/auth/signup", {
-        method: "POST",
-        body: { name, email, password },
-        credentials: "include",
+      const supabase = createSupabaseBrowserClient();
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: name ? { full_name: name } : undefined,
+          emailRedirectTo: buildBrowserCallbackUrl(nextPath),
+        },
       });
 
+      if (signUpError) {
+        setError(signUpError.message);
+        setStatus("idle");
+        return;
+      }
+
+      if (data.session) {
+        setStatus("success");
+        router.replace(nextPath);
+        router.refresh();
+        return;
+      }
+
       setStatus("success");
-      const nextPath = typeof response?.redirect === "string" ? response.redirect : "/signin";
-      router.push(nextPath);
+      setInfo("Check your email to confirm your account.");
     } catch (err) {
-      const message = err instanceof ApiError ? err.message : "Sign-up failed. Try again.";
-      setError(message);
+      const message = err instanceof Error ? err.message : "Sign-up failed. Try again.";
+      setError(message || "Sign-up failed. Try again.");
       setStatus("idle");
     }
   };
@@ -106,7 +123,7 @@ export default function SignUpPage() {
           )}
           {status === "success" && (
             <div className="authAlert authAlertSuccess" role="status">
-              Account created. Redirecting...
+              {info ?? "Account created. Redirecting..."}
             </div>
           )}
           <div className="authField">

@@ -1,14 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useLayoutEffect, useRef, useState } from "react";
+import { createSupabaseBrowserClient } from "../lib/supabase/client";
 
 function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function TopNav() {
+type TopNavProps = {
+  isAuthenticated?: boolean;
+};
+
+export default function TopNav({ isAuthenticated = false }: TopNavProps) {
+  const router = useRouter();
   const pathname = usePathname();
   const isMarkets = pathname === "/" || pathname.startsWith("/markets");
   const topBarInnerRef = useRef<HTMLDivElement>(null);
@@ -18,15 +24,20 @@ export default function TopNav() {
   const navRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [navCollapsed, setNavCollapsed] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [pathname]);
+  const closeMenu = () => setMenuOpen(false);
 
-  useEffect(() => {
-    if (!navCollapsed) setMenuOpen(false);
-  }, [navCollapsed]);
-
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    const supabase = createSupabaseBrowserClient();
+    const { error } = await supabase.auth.signOut();
+    setSigningOut(false);
+    if (error) return;
+    closeMenu();
+    router.replace("/signin");
+    router.refresh();
+  };
 
   useLayoutEffect(() => {
     const topBarInner = topBarInnerRef.current;
@@ -105,6 +116,7 @@ export default function TopNav() {
                 key={item.href}
                 href={item.href}
                 className={cx("navLink", item.active && "navLinkActive")}
+                onClick={closeMenu}
               >
                 {item.label}
               </Link>
@@ -124,22 +136,31 @@ export default function TopNav() {
         </div>
 
         <div ref={topRightRef} className="topRight">
-          <Link href="/signin" className="topTextLink">
-            Sign In
-          </Link>
+          {isAuthenticated ? (
+            <button className="topTextLink" type="button" onClick={handleSignOut} disabled={signingOut}>
+              {signingOut ? "Signing out..." : "Sign Out"}
+            </button>
+          ) : (
+            <>
+              <Link href="/signin" className="topTextLink" onClick={closeMenu}>
+                Sign In
+              </Link>
 
-          <Link href="/signup" className="btnPrimary">
-            Get Started
-          </Link>
+              <Link href="/signup" className="btnPrimary" onClick={closeMenu}>
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
-      <div id="navMenu" className={menuOpen ? "navMenu navMenuOpen" : "navMenu"}>
+      <div id="navMenu" className={menuOpen && navCollapsed ? "navMenu navMenuOpen" : "navMenu"}>
         {navItems.map((item) => (
           <Link
             key={`${item.href}-menu`}
             href={item.href}
             className={cx("navMenuLink", item.active && "navMenuLinkActive")}
+            onClick={closeMenu}
           >
             {item.label}
           </Link>
