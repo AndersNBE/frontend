@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { createSupabaseBrowserClient } from "../lib/supabase/client";
-import { buildBrowserCallbackUrl } from "../lib/supabase/redirect";
+import { buildBrowserRecoveryCallbackUrl } from "../lib/supabase/redirect";
 
 export default function ForgotPasswordPage() {
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
     try {
       const supabase = createSupabaseBrowserClient();
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: buildBrowserCallbackUrl("/account/reset-password", "recovery"),
+        redirectTo: buildBrowserRecoveryCallbackUrl(),
       });
 
       if (resetError) {

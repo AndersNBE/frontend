@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "../lib/supabase/client";
-import { buildBrowserCallbackUrl } from "../lib/supabase/redirect";
+import { buildBrowserRecoveryCallbackUrl } from "../lib/supabase/redirect";
 
 type AccountClientProps = {
   email: string;
@@ -37,10 +37,7 @@ export default function AccountClient({
   const [resetInfo, setResetInfo] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
 
-  const resetRedirectUrl = useMemo(
-    () => buildBrowserCallbackUrl("/account/reset-password", "recovery"),
-    [],
-  );
+  const resetRedirectUrl = useMemo(() => buildBrowserRecoveryCallbackUrl(), []);
 
   const handleSendPasswordReset = async () => {
     setResetError(null);
