@@ -66,8 +66,13 @@ const legalNav = [
   { slug: "accessibility", label: "Webtilgaengelighed" },
 ];
 
-export default function LegalPage({ params }: { params: { slug: string } }) {
-  const content = legalPages[params.slug];
+export default async function LegalPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const content = legalPages[slug];
 
   if (!content) {
     return (

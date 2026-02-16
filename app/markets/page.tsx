@@ -1,5 +1,10 @@
+import { Suspense } from "react";
 import MarketsClientPage from "./ClientPage";
 
 export default function MarketsPage() {
-  return <MarketsClientPage />;
+  return (
+    <Suspense fallback={null}>
+      <MarketsClientPage />
+    </Suspense>
+  );
 }
