@@ -34,11 +34,6 @@ export function buildBrowserCallbackUrl(
   return callbackUrl.toString();
 }
 
-export function buildBrowserRecoveryCallbackUrl(): string {
-  const origin = typeof window !== "undefined" ? window.location.origin : defaultOrigin();
-  return new URL("/auth/recovery", origin).toString();
-}
-
 export function buildSignupEmailRedirectUrl(): string {
   return new URL("/auth/callback", PRIMARY_APP_ORIGIN).toString();
 }
