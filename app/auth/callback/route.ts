@@ -50,8 +50,12 @@ export async function GET(request: Request) {
   const tokenHash = requestUrl.searchParams.get("token_hash");
   const otpType = parseEmailOtpType(requestUrl.searchParams.get("type"));
   const flow = requestUrl.searchParams.get("flow");
+  const isRecoveryFlow = flow === "recovery" || otpType === "recovery";
   const isSignupFlow = flow === "signup" || otpType === "signup";
-  const nextPath = normalizeNextPath(requestUrl.searchParams.get("next"));
+  const nextPath = normalizeNextPath(
+    requestUrl.searchParams.get("next"),
+    isRecoveryFlow ? "/account/reset-password" : "/markets",
+  );
   const supabase = await createSupabaseServerClient();
 
   if (tokenHash && otpType) {
