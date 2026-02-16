@@ -43,7 +43,22 @@ function SignUpContent() {
       });
 
       if (signUpError) {
-        setError(signUpError.message);
+        const errorCode = (signUpError as { code?: string }).code;
+        const lowerMessage = signUpError.message.toLowerCase();
+        const emailTaken =
+          errorCode === "user_already_exists" ||
+          lowerMessage.includes("already registered") ||
+          lowerMessage.includes("already in use");
+
+        setError(emailTaken ? "An account with this email already exists." : signUpError.message);
+        setStatus("idle");
+        return;
+      }
+
+      const existingUserWithoutIdentity =
+        !!data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0;
+      if (existingUserWithoutIdentity) {
+        setError("An account with this email already exists.");
         setStatus("idle");
         return;
       }
