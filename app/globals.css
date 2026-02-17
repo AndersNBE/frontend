@@ -336,14 +336,38 @@ a { color: inherit; text-decoration: none; }
   color: var(--text);
 }
 
-.marketsTopPanel {
+.marketsBoard {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(320px, 0.9fr);
   gap: 18px;
   margin: 8px 0 24px;
 }
 
+.marketsBoardMain {
+  grid-column: 1 / span 2;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-content: start;
+}
+
+.marketsMainHeader {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.marketsMainHeader h2 {
+  margin: 0;
+  font-size: 34px;
+  letter-spacing: -0.03em;
+  color: #111b32;
+}
+
 .featuredMarketCard {
+  grid-column: 1 / -1;
   position: relative;
   display: grid;
   gap: 14px;
@@ -353,6 +377,8 @@ a { color: inherit; text-decoration: none; }
   background: linear-gradient(145deg, #0b1b38 0%, #0f2447 55%, #13326a 100%);
   color: #e8efff;
   box-shadow: 0 18px 30px rgba(7, 15, 33, 0.28);
+  min-height: 520px;
+  align-content: space-between;
 }
 
 .featuredMarketTop {
@@ -462,6 +488,9 @@ a { color: inherit; text-decoration: none; }
 }
 
 .marketsRail {
+  grid-column: 3;
+  position: sticky;
+  top: 86px;
   border-radius: 20px;
   border: 1px solid #1f2f4f;
   background: #0a1222;
@@ -563,19 +592,35 @@ a { color: inherit; text-decoration: none; }
   color: #fb7185;
 }
 
-.grid {
+.marketsBoardMain .card {
+  min-height: 232px;
+}
+
+.marketsEmptyState {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 12px;
+  place-items: center;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+@media (max-width: 1240px) {
+  .marketsBoard {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .marketsBoardMain {
+    grid-column: 1;
+  }
+
+  .marketsRail {
+    grid-column: 1;
+    position: static;
+  }
 }
 
 @media (max-width: 1020px) {
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .controlsRow { grid-template-columns: 1fr; }
-  .marketsTopPanel {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 900px) {
@@ -603,7 +648,13 @@ a { color: inherit; text-decoration: none; }
 }
 
 @media (max-width: 640px) {
-  .grid { grid-template-columns: 1fr; }
+  .marketsBoardMain {
+    grid-template-columns: 1fr;
+  }
+
+  .featuredMarketCard {
+    min-height: 420px;
+  }
 
   .featuredMarketTitle {
     font-size: 24px;

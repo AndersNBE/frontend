@@ -253,58 +253,115 @@ export default function MarketsView({
       )}
 
       {!initialError && featuredMarket && (
-        <div className="marketsTopPanel">
-          <Link
-            href={`/markets/${encodeURIComponent(featuredMarket.market.id)}`}
-            className="featuredMarketCard"
-          >
-            <div className="featuredMarketTop">
-              <span className="featuredMarketBadge">Top Trending</span>
-              <span className="featuredMarketPill">{categoryMeta[featuredMarket.category].label}</span>
-            </div>
-
-            <h2 className="featuredMarketTitle">{featuredMarket.market.title}</h2>
-
-            <p className="featuredMarketDescription">
-              {featuredMarket.market.description ??
-                "Highest live momentum right now based on traded volume and probability movement."}
-            </p>
-
-            <div className="featuredMarketStats">
-              <div className="featuredMarketStat">
-                <span>Yes</span>
-                <strong>{formatPercent(featuredMarket.probability)}</strong>
+        <div className="marketsBoard">
+          <div className="marketsBoardMain">
+            <Link
+              href={`/markets/${encodeURIComponent(featuredMarket.market.id)}`}
+              className="featuredMarketCard"
+            >
+              <div className="featuredMarketTop">
+                <span className="featuredMarketBadge">Top Trending</span>
+                <span className="featuredMarketPill">{categoryMeta[featuredMarket.category].label}</span>
               </div>
-              <div className="featuredMarketStat">
-                <span>No</span>
-                <strong>{formatPercent(1 - featuredMarket.probability)}</strong>
+
+              <h2 className="featuredMarketTitle">{featuredMarket.market.title}</h2>
+
+              <p className="featuredMarketDescription">
+                {featuredMarket.market.description ??
+                  "Highest live momentum right now based on traded volume and probability movement."}
+              </p>
+
+              <div className="featuredMarketStats">
+                <div className="featuredMarketStat">
+                  <span>Yes</span>
+                  <strong>{formatPercent(featuredMarket.probability)}</strong>
+                </div>
+                <div className="featuredMarketStat">
+                  <span>No</span>
+                  <strong>{formatPercent(1 - featuredMarket.probability)}</strong>
+                </div>
+                <div className="featuredMarketStat">
+                  <span>Move</span>
+                  <strong
+                    className={
+                      featuredMarket.moverDelta >= 0
+                        ? "featuredMarketDelta featuredMarketDeltaUp"
+                        : "featuredMarketDelta featuredMarketDeltaDown"
+                    }
+                  >
+                    {featuredMarket.moverDelta >= 0 ? "▲" : "▼"} {Math.abs(featuredMarket.moverDelta)}
+                  </strong>
+                </div>
               </div>
-              <div className="featuredMarketStat">
-                <span>Move</span>
-                <strong
-                  className={
-                    featuredMarket.moverDelta >= 0
-                      ? "featuredMarketDelta featuredMarketDeltaUp"
-                      : "featuredMarketDelta featuredMarketDeltaDown"
-                  }
-                >
-                  {featuredMarket.moverDelta >= 0 ? "▲" : "▼"} {Math.abs(featuredMarket.moverDelta)}
-                </strong>
+
+              <div className="featuredMarketTrack" aria-hidden="true">
+                <div
+                  className="featuredMarketTrackFill"
+                  style={{ width: `${featuredMarket.probabilityPct}%` }}
+                />
               </div>
+
+              <div className="featuredMarketFooter">
+                <span>{formatKrShort(featuredMarket.volume)} volume</span>
+                <span>{featuredMarket.isOpen ? "Open" : "Ended"}</span>
+              </div>
+            </Link>
+
+            <div className="marketsMainHeader">
+              <h2>Top Markets</h2>
             </div>
 
-            <div className="featuredMarketTrack" aria-hidden="true">
-              <div
-                className="featuredMarketTrackFill"
-                style={{ width: `${featuredMarket.probabilityPct}%` }}
-              />
-            </div>
+            {filtered.length === 0 && (
+              <div className="card marketsEmptyState">
+                No markets match your current filters.
+              </div>
+            )}
 
-            <div className="featuredMarketFooter">
-              <span>{formatKrShort(featuredMarket.volume)} volume</span>
-              <span>{featuredMarket.isOpen ? "Open" : "Ended"}</span>
-            </div>
-          </Link>
+            {filtered.map((m) => {
+              const ended = m.status !== "open";
+              const category = m.category ?? "finance";
+              const volume = m.volumeKr ?? 0;
+
+              return (
+                <Link key={m.id} href={`/markets/${encodeURIComponent(m.id)}`} className="card">
+                  <div className="cardTop">
+                    <span className={tagClass(category)}>
+                      <span aria-hidden="true">
+                        {category === "finance" && "📈"}
+                        {category === "sports" && "🏆"}
+                        {category === "politics" && "🗳"}
+                        {category === "entertainment" && "🎬"}
+                      </span>
+                      <span>{category}</span>
+                    </span>
+
+                    <span className="ended">
+                      <span aria-hidden="true">🕒</span>
+                      <span>{ended ? "Ended" : "Open"}</span>
+                    </span>
+                  </div>
+
+                  <div className="cardTitle">{m.title}</div>
+
+                  <div className="priceRow">
+                    <span className="priceBtn priceYes">
+                      <span>Yes</span>
+                      <span>{formatDkk(m.yesPrice)}</span>
+                    </span>
+                    <span className="priceBtn priceNo">
+                      <span>No</span>
+                      <span>{formatDkk(m.noPrice)}</span>
+                    </span>
+                  </div>
+
+                  <div className="cardBottom">
+                    <span aria-hidden="true">↗</span>
+                    <span>{formatKrShort(volume)}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
 
           <aside className="marketsRail">
             {sidebarSections.map((section) => (
@@ -354,53 +411,6 @@ export default function MarketsView({
           </aside>
         </div>
       )}
-
-      <div className="grid">
-        {filtered.map((m) => {
-          const ended = m.status !== "open";
-          const category = m.category ?? "finance";
-          const volume = m.volumeKr ?? 0;
-
-          return (
-            <Link key={m.id} href={`/markets/${encodeURIComponent(m.id)}`} className="card">
-              <div className="cardTop">
-                <span className={tagClass(category)}>
-                  <span aria-hidden="true">
-                    {category === "finance" && "📈"}
-                    {category === "sports" && "🏆"}
-                    {category === "politics" && "🗳"}
-                    {category === "entertainment" && "🎬"}
-                  </span>
-                  <span>{category}</span>
-                </span>
-
-                <span className="ended">
-                  <span aria-hidden="true">🕒</span>
-                  <span>{ended ? "Ended" : "Open"}</span>
-                </span>
-              </div>
-
-              <div className="cardTitle">{m.title}</div>
-
-              <div className="priceRow">
-                <span className="priceBtn priceYes">
-                  <span>Yes</span>
-                  <span>{formatDkk(m.yesPrice)}</span>
-                </span>
-                <span className="priceBtn priceNo">
-                  <span>No</span>
-                  <span>{formatDkk(m.noPrice)}</span>
-                </span>
-              </div>
-
-              <div className="cardBottom">
-                <span aria-hidden="true">↗</span>
-                <span>{formatKrShort(volume)}</span>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
     </section>
   );
 }
