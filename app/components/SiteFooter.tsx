@@ -5,7 +5,6 @@ const footerColumns = [
     title: "Drift og ansvar",
     links: [
       { label: "Driftsstatus", href: "/legal/status" },
-      { label: "Spil med omtanke", href: "/legal/omtanke" },
       { label: "Sunde spillevaner", href: "/legal/vaner" },
       { label: "Rofus", href: "/legal/rofus" },
       { label: "Spilleregler", href: "/legal/rules" },
@@ -65,37 +64,6 @@ export default function SiteFooter() {
           <Link href="/help" className="footerSupportButton">
             Brug for hjaelp?
           </Link>
-        </div>
-      </div>
-
-      <div className="footerCare">
-        <div className="footerCareInner">
-          <div className="footerCareHeader">
-            <h3>Spil med omtanke</h3>
-            <p>
-              Spil aldrig for mere, end du har raad til at tabe og husk at tage pause.{" "}
-              <Link href="/legal/omtanke">Laes mere her</Link>
-            </p>
-          </div>
-
-          <div className="footerCareGrid">
-            <div className="footerCareCard">
-              <div className="footerCareIcon">18+</div>
-              <p>Du skal vaere over 18 aar for at kunne bruge Udfall.</p>
-            </div>
-            <div className="footerCareCard">
-              <div className="footerCareIcon">ROFUS</div>
-              <p>Du kan udelukke dig fra spil via ROFUS.</p>
-            </div>
-            <div className="footerCareCard">
-              <div className="footerCareIcon">Stop</div>
-              <p>Hjaelp til ansvarligt spil findes hos StopSpillet.</p>
-            </div>
-            <div className="footerCareCard">
-              <div className="footerCareIcon">SM</div>
-              <p>Udfall overvages af Spillemyndigheden.</p>
-            </div>
-          </div>
         </div>
       </div>
     </footer>
