@@ -388,6 +388,12 @@ a { color: inherit; text-decoration: none; }
   gap: 10px;
 }
 
+.featuredMarketTopRight {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .featuredMarketBadge {
   display: inline-flex;
   align-items: center;
@@ -414,12 +420,28 @@ a { color: inherit; text-decoration: none; }
   background: rgba(26, 63, 123, 0.4);
 }
 
+.featuredMarketOpenLink {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #dbe7ff;
+  border: 1px solid rgba(162, 190, 248, 0.35);
+  background: rgba(10, 25, 50, 0.65);
+}
+
 .featuredMarketTitle {
   margin: 0;
   font-size: 32px;
   line-height: 1.15;
   letter-spacing: -0.03em;
   color: #fff;
+}
+
+.featuredMarketTitle a {
+  color: inherit;
 }
 
 .featuredMarketDescription {
@@ -476,6 +498,157 @@ a { color: inherit; text-decoration: none; }
 .featuredMarketTrackFill {
   height: 100%;
   background: linear-gradient(90deg, #60a5fa, #2563eb);
+}
+
+.featuredMarketChartWrap {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(143, 173, 235, 0.22);
+  background: rgba(8, 18, 36, 0.52);
+}
+
+.featuredMarketChartHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.featuredMarketChartEyebrow {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(195, 213, 248, 0.82);
+}
+
+.featuredMarketChartNow {
+  margin-top: 4px;
+  display: block;
+  font-size: 24px;
+  color: #fff;
+  letter-spacing: -0.03em;
+}
+
+.featuredMarketChartPills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.featuredMarketChartPill {
+  border: 1px solid rgba(145, 173, 233, 0.24);
+  background: rgba(11, 27, 52, 0.56);
+  border-radius: 999px;
+  color: #d3e3ff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 9px;
+  cursor: pointer;
+}
+
+.featuredMarketChartPillActive {
+  background: #1d4ed8;
+  border-color: rgba(129, 169, 255, 0.9);
+  color: #fff;
+}
+
+.featuredMarketChart {
+  position: relative;
+  height: 160px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(146, 175, 240, 0.2);
+  background: rgba(7, 16, 32, 0.86);
+}
+
+.featuredMarketChartGrid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(145, 173, 233, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(145, 173, 233, 0.12) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.featuredMarketChartSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.featuredMarketChartArea {
+  fill: rgba(96, 165, 250, 0.24);
+}
+
+.featuredMarketChartLine {
+  fill: none;
+  stroke: #60a5fa;
+  stroke-width: 2.8;
+}
+
+.featuredMarketChartHover {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  pointer-events: none;
+}
+
+.featuredMarketChartHoverLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(207, 225, 255, 0.6);
+}
+
+.featuredMarketChartHoverDot {
+  position: absolute;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #bfdbfe;
+  border: 2px solid #0a1222;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.28);
+}
+
+.featuredMarketChartTooltip {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  transform: translateX(-50%);
+  display: grid;
+  gap: 2px;
+  white-space: nowrap;
+  background: rgba(8, 17, 34, 0.95);
+  border: 1px solid rgba(147, 175, 237, 0.36);
+  border-radius: 10px;
+  padding: 7px 9px;
+}
+
+.featuredMarketChartTooltip span {
+  font-size: 10px;
+  color: rgba(197, 214, 248, 0.84);
+}
+
+.featuredMarketChartTooltip strong {
+  font-size: 13px;
+  color: #fff;
+}
+
+.featuredMarketChartTooltip em {
+  font-style: normal;
+  font-size: 10px;
+  color: rgba(197, 214, 248, 0.78);
+}
+
+.featuredMarketChartTooltipRight {
+  transform: translateX(-100%);
 }
 
 .featuredMarketFooter {
@@ -660,8 +833,26 @@ a { color: inherit; text-decoration: none; }
     font-size: 24px;
   }
 
+  .featuredMarketTop {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .featuredMarketTopRight {
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .featuredMarketStats {
     grid-template-columns: 1fr;
+  }
+
+  .featuredMarketChartHeader {
+    flex-direction: column;
+  }
+
+  .featuredMarketChartNow {
+    font-size: 20px;
   }
 
   .marketsRailPercent {
