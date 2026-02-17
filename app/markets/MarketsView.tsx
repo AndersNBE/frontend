@@ -27,12 +27,12 @@ type RankedMarket = {
   isOpen: boolean;
 };
 
-const categoryMeta: Record<CategoryKey, { label: string; icon: string }> = {
-  all: { label: "All Markets", icon: "◻" },
-  politics: { label: "Politics", icon: "🗳" },
-  sports: { label: "Sports", icon: "🏆" },
-  finance: { label: "Finance", icon: "📈" },
-  entertainment: { label: "Entertainment", icon: "🎬" },
+const categoryMeta: Record<CategoryKey, { label: string }> = {
+  all: { label: "All Markets" },
+  politics: { label: "Politics" },
+  sports: { label: "Sports" },
+  finance: { label: "Finance" },
+  entertainment: { label: "Entertainment" },
 };
 const HERO_CHART_RANGES: readonly HeroChartRange[] = ["1D", "1W", "1M", "All"];
 
@@ -313,7 +313,6 @@ export default function MarketsView({
                 onClick={() => setActiveCat(k)}
                 type="button"
               >
-                <span aria-hidden="true">{meta.icon}</span>
                 <span>{meta.label}</span>
               </button>
             );
@@ -483,25 +482,17 @@ export default function MarketsView({
             {filtered.map((m) => {
               const ended = m.status !== "open";
               const category = m.category ?? "finance";
+              const categoryLabel = categoryMeta[normalizeCategory(category)].label;
               const volume = m.volumeKr ?? 0;
 
               return (
                 <Link key={m.id} href={`/markets/${encodeURIComponent(m.id)}`} className="card">
                   <div className="cardTop">
                     <span className={tagClass(category)}>
-                      <span aria-hidden="true">
-                        {category === "finance" && "📈"}
-                        {category === "sports" && "🏆"}
-                        {category === "politics" && "🗳"}
-                        {category === "entertainment" && "🎬"}
-                      </span>
-                      <span>{category}</span>
+                      <span>{categoryLabel}</span>
                     </span>
 
-                    <span className="ended">
-                      <span aria-hidden="true">🕒</span>
-                      <span>{ended ? "Ended" : "Open"}</span>
-                    </span>
+                    <span className="ended">{ended ? "Ended" : "Open"}</span>
                   </div>
 
                   <div className="cardTitle">{m.title}</div>
