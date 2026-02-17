@@ -112,16 +112,6 @@ export default function TopNav({ isAuthenticated = false }: TopNavProps) {
             ))}
           </nav>
 
-          <button
-            className="navMenuButton"
-            type="button"
-            onClick={() => setMenuOpen((prev) => !prev)}
-            aria-expanded={menuOpen}
-            aria-controls="navMenu"
-          >
-            <span className="navMenuIcon" aria-hidden="true">☰</span>
-            <span>Menu</span>
-          </button>
         </div>
 
         <div ref={topRightRef} className="topRight">
@@ -140,6 +130,16 @@ export default function TopNav({ isAuthenticated = false }: TopNavProps) {
               </Link>
             </>
           )}
+          <button
+            className="navMenuButton"
+            type="button"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-expanded={menuOpen}
+            aria-controls="navMenu"
+          >
+            <span className="navMenuIcon" aria-hidden="true">☰</span>
+            <span>Menu</span>
+          </button>
         </div>
       </div>
 
