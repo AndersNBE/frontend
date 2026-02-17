@@ -2,25 +2,25 @@ import Link from "next/link";
 
 const footerColumns = [
   {
-    title: "Drift og ansvar",
+    title: "Operations & responsibility",
     links: [
-      { label: "Driftsstatus", href: "/legal/status" },
-      { label: "Sunde spillevaner", href: "/legal/vaner" },
+      { label: "System status", href: "/legal/status" },
+      { label: "Healthy play habits", href: "/legal/vaner" },
       { label: "Rofus", href: "/legal/rofus" },
-      { label: "Spilleregler", href: "/legal/rules" },
-      { label: "Sletning/indsigt i data", href: "/legal/data" },
+      { label: "Rules", href: "/legal/rules" },
+      { label: "Data deletion/access", href: "/legal/data" },
       { label: "Whistleblower", href: "/legal/whistleblower" },
     ],
   },
   {
-    title: "Vilkår",
+    title: "Policies",
     links: [
-      { label: "Vinderchancer", href: "/legal/odds" },
+      { label: "Winning probabilities", href: "/legal/odds" },
       { label: "Cookies", href: "/legal/cookies" },
-      { label: "Forhandlere", href: "/legal/partners" },
-      { label: "Kanaloversigt", href: "/legal/channels" },
-      { label: "Privatlivspolitik", href: "/legal/privacy" },
-      { label: "Webtilgaengelighed", href: "/legal/accessibility" },
+      { label: "Partners", href: "/legal/partners" },
+      { label: "Channel overview", href: "/legal/channels" },
+      { label: "Privacy policy", href: "/legal/privacy" },
+      { label: "Web accessibility", href: "/legal/accessibility" },
     ],
   },
 ];
@@ -59,10 +59,10 @@ export default function SiteFooter() {
         </div>
 
         <div className="footerSupport">
-          <span className="footerTitle">Kontakt vores kundeservice</span>
-          <span className="footerSupportText">Alle dage fra 10-20</span>
+          <span className="footerTitle">Contact support</span>
+          <span className="footerSupportText">Every day from 10:00 to 20:00</span>
           <Link href="/help" className="footerSupportButton">
-            Brug for hjaelp?
+            Need help?
           </Link>
         </div>
       </div>

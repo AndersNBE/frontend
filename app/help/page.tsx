@@ -5,58 +5,58 @@ export default function HelpPage() {
     <section>
       <Link href="/markets" className="backLink">
         <span aria-hidden="true">&lt;-</span>
-        <span>Tilbage til markeder</span>
+        <span>Back to markets</span>
       </Link>
 
-      <h1 className="pageTitle">Kundeservice</h1>
-      <p className="pageSubtitle">Indsaet kort intro til support her.</p>
+      <h1 className="pageTitle">Support</h1>
+      <p className="pageSubtitle">Add a short support intro here.</p>
 
       <div className="marketLayout" style={{ marginTop: 18 }}>
         <div className="marketMain">
           <div className="marketCard">
-            <h3>Kontakt</h3>
-            <p style={{ margin: "8px 0 0", color: "var(--muted)" }}>Indsaet kontakttekst her.</p>
+            <h3>Contact</h3>
+            <p style={{ margin: "8px 0 0", color: "var(--muted)" }}>Add contact text here.</p>
           </div>
 
           <div className="marketCard">
             <h3>FAQ</h3>
-            <p style={{ margin: "8px 0 0", color: "var(--muted)" }}>Indsaet FAQ-tekst her.</p>
+            <p style={{ margin: "8px 0 0", color: "var(--muted)" }}>Add FAQ text here.</p>
           </div>
         </div>
 
         <aside className="marketSide">
           <div className="marketCard">
-            <h3>Aabningstider</h3>
+            <h3>Opening hours</h3>
             <div className="marketInfoList">
               <div>
-                <span>Hverdage</span>
-                <strong>Indsaet tider</strong>
+                <span>Weekdays</span>
+                <strong>Add hours</strong>
               </div>
               <div>
                 <span>Weekend</span>
-                <strong>Indsaet tider</strong>
+                <strong>Add hours</strong>
               </div>
               <div>
-                <span>Svartid</span>
-                <strong>Indsaet svartid</strong>
+                <span>Response time</span>
+                <strong>Add response time</strong>
               </div>
             </div>
           </div>
 
           <div className="marketCard">
-            <h3>Kontaktkanaler</h3>
+            <h3>Contact channels</h3>
             <div className="marketInfoList">
               <div>
                 <span>Email</span>
-                <strong>Indsaet email</strong>
+                <strong>Add email</strong>
               </div>
               <div>
-                <span>Telefon</span>
-                <strong>Indsaet telefon</strong>
+                <span>Phone</span>
+                <strong>Add phone</strong>
               </div>
               <div>
                 <span>Chat</span>
-                <strong>Indsaet chat</strong>
+                <strong>Add chat</strong>
               </div>
             </div>
           </div>

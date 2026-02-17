@@ -13,7 +13,7 @@ type UnlockRequestBody = {
 export async function POST(request: Request) {
   if (!isWaitlistGateConfigured()) {
     return NextResponse.json(
-      { error: "Waitlist gate er ikke konfigureret paa serveren." },
+      { error: "Waitlist gate is not configured on the server." },
       { status: 503 },
     );
   }
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
   if (userError || !user) {
     return NextResponse.json(
-      { error: "Du skal vaere logget ind." },
+      { error: "You must be signed in." },
       { status: 401 },
     );
   }
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     body = (await request.json()) as UnlockRequestBody;
   } catch {
     return NextResponse.json(
-      { error: "Ugyldig request payload." },
+      { error: "Invalid request payload." },
       { status: 400 },
     );
   }
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
 
   if (!isCorrectWaitlistAccessCode(password)) {
     return NextResponse.json(
-      { error: "Forkert adgangskode." },
+      { error: "Invalid access code." },
       { status: 401 },
     );
   }

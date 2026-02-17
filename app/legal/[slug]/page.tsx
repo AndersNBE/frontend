@@ -14,17 +14,17 @@ type LegalPageContent = {
 
 const placeholderSections: LegalSection[] = [
   {
-    title: "Oversigt",
-    body: "Indsaet tekst her.",
+    title: "Overview",
+    body: "Add text here.",
   },
   {
-    title: "Detaljer",
-    body: "Indsaet tekst her.",
-    bullets: ["Indsaet punkt her.", "Indsaet punkt her.", "Indsaet punkt her."],
+    title: "Details",
+    body: "Add text here.",
+    bullets: ["Add bullet here.", "Add bullet here.", "Add bullet here."],
   },
   {
-    title: "Kontakt",
-    body: "Indsaet tekst her.",
+    title: "Contact",
+    body: "Add text here.",
   },
 ];
 
@@ -35,35 +35,35 @@ const makePage = (title: string, subtitle: string): LegalPageContent => ({
 });
 
 const legalPages: Record<string, LegalPageContent> = {
-  status: makePage("Driftsstatus", "Indsaet kort intro her."),
-  omtanke: makePage("Spil med omtanke", "Indsaet kort intro her."),
-  vaner: makePage("Sunde spillevaner", "Indsaet kort intro her."),
-  rofus: makePage("Rofus", "Indsaet kort intro her."),
-  rules: makePage("Spilleregler", "Indsaet kort intro her."),
-  data: makePage("Sletning og indsigt i data", "Indsaet kort intro her."),
-  whistleblower: makePage("Whistleblower", "Indsaet kort intro her."),
-  odds: makePage("Vinderchancer", "Indsaet kort intro her."),
-  cookies: makePage("Cookies", "Indsaet kort intro her."),
-  partners: makePage("Forhandlere", "Indsaet kort intro her."),
-  channels: makePage("Kanaloversigt", "Indsaet kort intro her."),
-  privacy: makePage("Privatlivspolitik", "Indsaet kort intro her."),
-  accessibility: makePage("Webtilgaengelighed", "Indsaet kort intro her."),
+  status: makePage("System status", "Add a short intro here."),
+  omtanke: makePage("Play responsibly", "Add a short intro here."),
+  vaner: makePage("Healthy play habits", "Add a short intro here."),
+  rofus: makePage("Rofus", "Add a short intro here."),
+  rules: makePage("Rules", "Add a short intro here."),
+  data: makePage("Data deletion and access", "Add a short intro here."),
+  whistleblower: makePage("Whistleblower", "Add a short intro here."),
+  odds: makePage("Winning probabilities", "Add a short intro here."),
+  cookies: makePage("Cookies", "Add a short intro here."),
+  partners: makePage("Partners", "Add a short intro here."),
+  channels: makePage("Channel overview", "Add a short intro here."),
+  privacy: makePage("Privacy policy", "Add a short intro here."),
+  accessibility: makePage("Web accessibility", "Add a short intro here."),
 };
 
 const legalNav = [
-  { slug: "status", label: "Driftsstatus" },
-  { slug: "omtanke", label: "Spil med omtanke" },
-  { slug: "vaner", label: "Sunde spillevaner" },
+  { slug: "status", label: "System status" },
+  { slug: "omtanke", label: "Play responsibly" },
+  { slug: "vaner", label: "Healthy play habits" },
   { slug: "rofus", label: "Rofus" },
-  { slug: "rules", label: "Spilleregler" },
-  { slug: "data", label: "Sletning og indsigt i data" },
+  { slug: "rules", label: "Rules" },
+  { slug: "data", label: "Data deletion and access" },
   { slug: "whistleblower", label: "Whistleblower" },
-  { slug: "odds", label: "Vinderchancer" },
+  { slug: "odds", label: "Winning probabilities" },
   { slug: "cookies", label: "Cookies" },
-  { slug: "partners", label: "Forhandlere" },
-  { slug: "channels", label: "Kanaloversigt" },
-  { slug: "privacy", label: "Privatlivspolitik" },
-  { slug: "accessibility", label: "Webtilgaengelighed" },
+  { slug: "partners", label: "Partners" },
+  { slug: "channels", label: "Channel overview" },
+  { slug: "privacy", label: "Privacy policy" },
+  { slug: "accessibility", label: "Web accessibility" },
 ];
 
 export default async function LegalPage({
@@ -79,19 +79,19 @@ export default async function LegalPage({
       <section>
         <Link href="/markets" className="backLink">
           <span aria-hidden="true">&lt;-</span>
-          <span>Tilbage til markeder</span>
+          <span>Back to markets</span>
         </Link>
 
-        <h1 className="pageTitle">Side ikke fundet</h1>
+        <h1 className="pageTitle">Page not found</h1>
         <p className="pageSubtitle">
-          Vi kunne ikke finde den oenskede side. Vaelg en af de officielle politikker herunder.
+          We could not find the requested page. Choose one of the official policies below.
         </p>
 
         <div className="card">
           <div className="marketInfoList" style={{ marginTop: 0 }}>
             {legalNav.map((item) => (
               <div key={item.slug}>
-                <span>Politik</span>
+                <span>Policy</span>
                 <Link className="authLink" href={`/legal/${item.slug}`}>
                   {item.label}
                 </Link>
@@ -107,7 +107,7 @@ export default async function LegalPage({
     <section>
       <Link href="/markets" className="backLink">
         <span aria-hidden="true">&lt;-</span>
-        <span>Tilbage til markeder</span>
+        <span>Back to markets</span>
       </Link>
 
       <h1 className="pageTitle">{content.title}</h1>
@@ -132,13 +132,13 @@ export default async function LegalPage({
 
         <aside className="marketSide">
           <div className="marketCard">
-            <h3>Andre politikker</h3>
+            <h3>Other policies</h3>
             <div className="marketInfoList">
               {legalNav.map((item) => (
                 <div key={item.slug}>
                   <span>{item.label}</span>
                   <Link className="authLink" href={`/legal/${item.slug}`}>
-                    Se siden
+                    View page
                   </Link>
                 </div>
               ))}
@@ -146,19 +146,19 @@ export default async function LegalPage({
           </div>
 
           <div className="marketCard">
-            <h3>Dokumentinfo</h3>
+            <h3>Document info</h3>
             <div className="marketInfoList">
               <div>
                 <span>Version</span>
-                <strong>Indsaet version</strong>
+                <strong>Add version</strong>
               </div>
               <div>
-                <span>Senest opdateret</span>
-                <strong>Indsaet dato</strong>
+                <span>Last updated</span>
+                <strong>Add date</strong>
               </div>
               <div>
-                <span>Gennemgaet af</span>
-                <strong>Indsaet navn</strong>
+                <span>Reviewed by</span>
+                <strong>Add name</strong>
               </div>
             </div>
           </div>

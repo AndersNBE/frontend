@@ -47,7 +47,7 @@ export default function MarketsClientPage({
   const handleUnlock = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!gatePassword.trim()) {
-      setGateError("Indtast adgangskoden.");
+      setGateError("Enter the access code.");
       return;
     }
 
@@ -68,7 +68,7 @@ export default function MarketsClientPage({
         | null;
 
       if (!response.ok) {
-        setGateError(body?.error ?? "Kunne ikke verificere adgangskoden.");
+        setGateError(body?.error ?? "Could not verify access code.");
         return;
       }
 
@@ -76,7 +76,7 @@ export default function MarketsClientPage({
       setGatePassword("");
       setGateError(null);
     } catch {
-      setGateError("Netvaerksfejl. Proev igen.");
+      setGateError("Network error. Try again.");
     } finally {
       setIsUnlocking(false);
     }
@@ -91,33 +91,32 @@ export default function MarketsClientPage({
       {!isUnlocked && (
         <section className="marketsGateOverlay" aria-live="polite">
           <div className="marketsGateMessage">
-            <h2>Du er tilfoejet til waitlist</h2>
+            <h2>You are on the waitlist</h2>
             <p>
-              Tak for at oprette en konto. Vi kontakter dig paa{" "}
-              <strong>{waitlistEmail || "din email"}</strong>, saa snart din adgang
-              er klar.
+              Thanks for creating an account. We will contact you at{" "}
+              <strong>{waitlistEmail || "your email"}</strong> as soon as access is ready.
             </p>
             <p>
-              Du kan se live markets i baggrunden, men handel er laast indtil du
-              faar adgang.
+              You can watch live markets in the background, but trading is locked
+              until you are granted access.
             </p>
           </div>
 
           <div className="marketsGateUnlockDock">
             <form onSubmit={handleUnlock} className="marketsGateUnlockForm">
-              <label htmlFor="markets-access-code">Har du adgangskode?</label>
+              <label htmlFor="markets-access-code">Have an access code?</label>
               <div className="marketsGateUnlockRow">
                 <input
                   id="markets-access-code"
                   type="password"
                   value={gatePassword}
                   onChange={(event) => setGatePassword(event.target.value)}
-                  placeholder="Indtast adgangskode"
+                  placeholder="Enter access code"
                   autoComplete="off"
                   disabled={isUnlocking}
                 />
                 <button type="submit" className="btnPrimary" disabled={isUnlocking}>
-                  {isUnlocking ? "Tjekker..." : "Aaben adgang"}
+                  {isUnlocking ? "Checking..." : "Unlock access"}
                 </button>
               </div>
               {gateError && <p className="marketsGateError">{gateError}</p>}

@@ -17,7 +17,7 @@ function formatTimestamp(value: string | null): string {
   if (!value) return "Not available";
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return value;
-  return new Intl.DateTimeFormat("da-DK", {
+  return new Intl.DateTimeFormat("en-US", {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(parsed);
