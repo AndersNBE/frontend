@@ -193,7 +193,6 @@ export default function MarketsView({
   const searchParams = useSearchParams();
   const [activeCat, setActiveCat] = useState<CategoryKey>("all");
   const [query, setQuery] = useState("");
-  const [sort, setSort] = useState<"trending" | "title">("trending");
   const [heroChartRange, setHeroChartRange] = useState<HeroChartRange>("1W");
   const [heroHoverIndex, setHeroHoverIndex] = useState<number | null>(null);
   const chartAnchor = useMemo(() => new Date(), []);
@@ -231,19 +230,15 @@ export default function MarketsView({
       list = list.filter((m) => m.title.toLowerCase().includes(q));
     }
 
-    if (sort === "trending") {
-      list.sort((a, b) => {
-        const rankA = rankingById.get(a.id)?.trendScore ?? 0;
-        const rankB = rankingById.get(b.id)?.trendScore ?? 0;
-        if (rankB !== rankA) return rankB - rankA;
-        return (b.volumeKr ?? 0) - (a.volumeKr ?? 0);
-      });
-    } else {
-      list.sort((a, b) => a.title.localeCompare(b.title));
-    }
+    list.sort((a, b) => {
+      const rankA = rankingById.get(a.id)?.trendScore ?? 0;
+      const rankB = rankingById.get(b.id)?.trendScore ?? 0;
+      if (rankB !== rankA) return rankB - rankA;
+      return (b.volumeKr ?? 0) - (a.volumeKr ?? 0);
+    });
 
     return list;
-  }, [categoryMarkets, query, sort, rankingById]);
+  }, [categoryMarkets, query, rankingById]);
 
   const sidebarSections = useMemo(
     () =>
@@ -306,47 +301,35 @@ export default function MarketsView({
 
   return (
     <section>
-      <h1 className="pageTitle">Markets</h1>
-      <p className="pageSubtitle">Explore prediction markets across all categories</p>
-
-      <div className="pillRow">
-        {Object.entries(categoryMeta).map(([key, meta]) => {
-          const k = key as CategoryKey;
-          const active = k === activeCat;
-          return (
-            <button
-              key={k}
-              className={active ? "pill pillActive" : "pill"}
-              onClick={() => setActiveCat(k)}
-              type="button"
-            >
-              <span aria-hidden="true">{meta.icon}</span>
-              <span>{meta.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="controlsRow">
-        <div className="searchBar">
-          <span aria-hidden="true" style={{ color: "var(--muted)" }}>⌕</span>
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search markets..."
-            aria-label="Search markets"
-          />
+      <div className="marketsStickyControls">
+        <div className="pillRow marketsFilterPills">
+          {Object.entries(categoryMeta).map(([key, meta]) => {
+            const k = key as CategoryKey;
+            const active = k === activeCat;
+            return (
+              <button
+                key={k}
+                className={active ? "pill pillActive" : "pill"}
+                onClick={() => setActiveCat(k)}
+                type="button"
+              >
+                <span aria-hidden="true">{meta.icon}</span>
+                <span>{meta.label}</span>
+              </button>
+            );
+          })}
         </div>
 
-        <div className="sortBox">
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value === "title" ? "title" : "trending")}
-            aria-label="Sort"
-          >
-            <option value="trending">Trending</option>
-            <option value="title">Title</option>
-          </select>
+        <div className="marketsStickySearchRow">
+          <div className="searchBar marketsSearchBar">
+            <span aria-hidden="true" style={{ color: "var(--muted)" }}>⌕</span>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search markets..."
+              aria-label="Search markets"
+            />
+          </div>
         </div>
       </div>
 
