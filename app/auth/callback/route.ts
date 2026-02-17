@@ -36,6 +36,23 @@ function toSigninRedirect(
   return NextResponse.redirect(signinUrl);
 }
 
+function toRecoveryRedirect(
+  request: Request,
+  params: {
+    error?: string;
+    errorCode?: string;
+  },
+) {
+  const recoveryUrl = resolveSafeRedirectUrl(request, "/auth/recovery", "/auth/recovery");
+  if (params.error) {
+    recoveryUrl.searchParams.set("error_description", params.error);
+  }
+  if (params.errorCode) {
+    recoveryUrl.searchParams.set("error_code", params.errorCode);
+  }
+  return NextResponse.redirect(recoveryUrl);
+}
+
 function isCodeVerifierError(message: string): boolean {
   const normalized = message.toLowerCase();
   return (
@@ -65,6 +82,9 @@ export async function GET(request: Request) {
     });
 
     if (error) {
+      if (isRecoveryFlow) {
+        return toRecoveryRedirect(request, { error: error.message });
+      }
       return toSigninRedirect(request, { error: error.message });
     }
 
@@ -76,6 +96,9 @@ export async function GET(request: Request) {
   }
 
   if (!code) {
+    if (isRecoveryFlow) {
+      return toRecoveryRedirect(request, { error: "Missing password reset code." });
+    }
     return toSigninRedirect(request, { error: "Missing authentication code." });
   }
 
@@ -93,13 +116,17 @@ export async function GET(request: Request) {
         error: "Open the one-time link on the same device where you requested it.",
       });
     }
-    if (flow === "recovery") {
-      return toSigninRedirect(request, {
+    if (isRecoveryFlow) {
+      return toRecoveryRedirect(request, {
         error: "Open the password reset link on the same device where you requested it.",
       });
     }
 
     return toSigninRedirect(request, { info: SIGNUP_CONFIRMED_INFO });
+  }
+
+  if (isRecoveryFlow) {
+    return toRecoveryRedirect(request, { error: error.message });
   }
 
   return toSigninRedirect(request, { error: error.message });
