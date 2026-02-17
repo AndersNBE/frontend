@@ -268,49 +268,6 @@ a { color: inherit; text-decoration: none; }
   margin: 10px 0 14px;
 }
 
-.marketsStickyControls {
-  position: sticky;
-  top: 58px;
-  z-index: 40;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
-  align-items: center;
-  gap: 12px;
-  margin: 0 -22px 16px;
-  padding: 10px 22px 12px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(243, 248, 255, 0.96);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
-}
-
-.marketsFilterPills {
-  margin: 0;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  padding-bottom: 2px;
-}
-
-.marketsFilterPills::-webkit-scrollbar {
-  display: none;
-}
-
-.marketsFilterPills .pill {
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-.marketsStickySearchRow {
-  display: flex;
-  align-items: center;
-}
-
-.marketsSearchBar {
-  width: 100%;
-}
-
 .pill {
   display: inline-flex;
   align-items: center;
@@ -337,6 +294,10 @@ a { color: inherit; text-decoration: none; }
   gap: 14px;
   align-items: center;
   margin: 10px 0 18px;
+}
+
+.marketsControlsRow {
+  grid-template-columns: 1fr;
 }
 
 .searchBar {
@@ -837,12 +798,6 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 1020px) {
   .controlsRow { grid-template-columns: 1fr; }
-
-  .marketsStickyControls {
-    top: 56px;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
 }
 
 @media (max-width: 900px) {
@@ -870,27 +825,6 @@ a { color: inherit; text-decoration: none; }
 }
 
 @media (max-width: 640px) {
-  .marketsStickyControls {
-    top: 54px;
-    margin-bottom: 14px;
-    padding: 8px 16px 10px;
-    margin-left: -22px;
-    margin-right: -22px;
-  }
-
-  .marketsFilterPills {
-    gap: 8px;
-  }
-
-  .marketsFilterPills .pill {
-    padding: 9px 12px;
-    font-size: 13px;
-  }
-
-  .marketsSearchBar {
-    padding: 10px 12px;
-  }
-
   .marketsBoardMain {
     grid-template-columns: 1fr;
   }

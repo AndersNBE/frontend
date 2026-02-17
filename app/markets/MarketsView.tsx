@@ -301,34 +301,32 @@ export default function MarketsView({
 
   return (
     <section>
-      <div className="marketsStickyControls">
-        <div className="pillRow marketsFilterPills">
-          {Object.entries(categoryMeta).map(([key, meta]) => {
-            const k = key as CategoryKey;
-            const active = k === activeCat;
-            return (
-              <button
-                key={k}
-                className={active ? "pill pillActive" : "pill"}
-                onClick={() => setActiveCat(k)}
-                type="button"
-              >
-                <span>{meta.label}</span>
-              </button>
-            );
-          })}
-        </div>
+      <div className="pillRow">
+        {Object.entries(categoryMeta).map(([key, meta]) => {
+          const k = key as CategoryKey;
+          const active = k === activeCat;
+          return (
+            <button
+              key={k}
+              className={active ? "pill pillActive" : "pill"}
+              onClick={() => setActiveCat(k)}
+              type="button"
+            >
+              <span>{meta.label}</span>
+            </button>
+          );
+        })}
+      </div>
 
-        <div className="marketsStickySearchRow">
-          <div className="searchBar marketsSearchBar">
-            <span aria-hidden="true" style={{ color: "var(--muted)" }}>⌕</span>
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search markets..."
-              aria-label="Search markets"
-            />
-          </div>
+      <div className="controlsRow marketsControlsRow">
+        <div className="searchBar">
+          <span aria-hidden="true" style={{ color: "var(--muted)" }}>⌕</span>
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search markets..."
+            aria-label="Search markets"
+          />
         </div>
       </div>
 
