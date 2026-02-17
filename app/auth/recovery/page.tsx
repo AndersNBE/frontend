@@ -1,7 +1,6 @@
 "use client";
 
 import { createBrowserClient } from "@supabase/ssr";
-import type { EmailOtpType } from "@supabase/supabase-js";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -64,18 +63,12 @@ export default function RecoveryPage() {
 
       const code = params.get("code");
       const tokenHash = params.get("token_hash");
+      const tokenType = params.get("type");
 
       try {
-        if (code) {
-          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-          if (exchangeError) {
-            setError(toFriendlyError(params, exchangeError.message));
-            setStatus("error");
-            return;
-          }
-        } else if (tokenHash) {
+        if (tokenHash) {
           const { error: verifyError } = await supabase.auth.verifyOtp({
-            type: "recovery" as EmailOtpType,
+            type: "recovery",
             token_hash: tokenHash,
           });
           if (verifyError) {
@@ -83,8 +76,19 @@ export default function RecoveryPage() {
             setStatus("error");
             return;
           }
+        } else if (code) {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+          if (exchangeError) {
+            setError(toFriendlyError(params, exchangeError.message));
+            setStatus("error");
+            return;
+          }
         } else {
-          setError(toFriendlyError(params, "Missing password reset code. Request a new reset email."));
+          const fallback =
+            tokenType && tokenType !== "recovery"
+              ? "Invalid reset token type. Request a new password reset email."
+              : "Missing password reset code. Request a new reset email.";
+          setError(toFriendlyError(params, fallback));
           setStatus("error");
           return;
         }
