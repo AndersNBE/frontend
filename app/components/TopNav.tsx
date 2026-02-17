@@ -15,6 +15,7 @@ type TopNavProps = {
 export default function TopNav({ isAuthenticated = false }: TopNavProps) {
   const pathname = usePathname();
   const isMarkets = pathname === "/" || pathname.startsWith("/markets");
+  const hideCategoryLinks = pathname === "/markets";
   const topBarInnerRef = useRef<HTMLDivElement>(null);
   const topLeftRef = useRef<HTMLDivElement>(null);
   const topRightRef = useRef<HTMLDivElement>(null);
@@ -74,13 +75,15 @@ export default function TopNav({ isAuthenticated = false }: TopNavProps) {
     };
   }, []);
 
-  const navItems = [
-    { href: "/markets", label: "Markets", active: isMarkets },
-    { href: "/markets?cat=politics", label: "Politics" },
-    { href: "/markets?cat=sports", label: "Sports" },
-    { href: "/markets?cat=finance", label: "Finance" },
-    { href: "/markets?cat=entertainment", label: "Entertainment" },
-  ];
+  const navItems = hideCategoryLinks
+    ? []
+    : [
+        { href: "/markets", label: "Markets", active: isMarkets },
+        { href: "/markets?cat=politics", label: "Politics" },
+        { href: "/markets?cat=sports", label: "Sports" },
+        { href: "/markets?cat=finance", label: "Finance" },
+        { href: "/markets?cat=entertainment", label: "Entertainment" },
+      ];
 
   return (
     <header className="topBar">
