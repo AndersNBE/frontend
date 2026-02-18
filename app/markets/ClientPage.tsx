@@ -91,6 +91,7 @@ export default function MarketsClientPage({
       {!isUnlocked && (
         <section className="marketsGateOverlay" aria-live="polite">
           <div className="marketsGateMessage">
+            <span className="marketsGateBadge">Waitlist Access</span>
             <h2>You are on the waitlist</h2>
             <p>
               Thanks for creating an account. We will contact you at{" "}
@@ -100,11 +101,28 @@ export default function MarketsClientPage({
               You can watch live markets in the background, but trading is locked
               until you are granted access.
             </p>
+            <div className="marketsGateFacts">
+              <div className="marketsGateFact">
+                <span>Status</span>
+                <strong>Queued for rollout</strong>
+              </div>
+              <div className="marketsGateFact">
+                <span>Access</span>
+                <strong>Invite code required</strong>
+              </div>
+              <div className="marketsGateFact">
+                <span>Contact</span>
+                <strong>{waitlistEmail || "Email on file"}</strong>
+              </div>
+            </div>
           </div>
 
           <div className="marketsGateUnlockDock">
             <form onSubmit={handleUnlock} className="marketsGateUnlockForm">
-              <label htmlFor="markets-access-code">Have an access code?</label>
+              <div className="marketsGateUnlockHeader">
+                <label htmlFor="markets-access-code">Have an access code?</label>
+                <span>Internal and early access members</span>
+              </div>
               <div className="marketsGateUnlockRow">
                 <input
                   id="markets-access-code"
@@ -115,7 +133,7 @@ export default function MarketsClientPage({
                   autoComplete="off"
                   disabled={isUnlocking}
                 />
-                <button type="submit" className="btnPrimary" disabled={isUnlocking}>
+                <button type="submit" className="marketsGateUnlockButton" disabled={isUnlocking}>
                   {isUnlocking ? "Checking..." : "Unlock access"}
                 </button>
               </div>
