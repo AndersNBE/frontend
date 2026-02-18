@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../lib/api/client";
 import MarketsView from "./MarketsView";
 import type { Market } from "../lib/markets/types";
@@ -9,6 +9,133 @@ type MarketsClientPageProps = {
   waitlistUnlocked: boolean;
   waitlistEmail: string;
 };
+
+type WaitlistPreviewMarket = {
+  id: string;
+  title: string;
+  category: string;
+  probabilityPct: number;
+  mover: number;
+  volume: number;
+  chartLinePath: string;
+  chartAreaPath: string;
+};
+
+function formatKrShort(value: number) {
+  if (!Number.isFinite(value)) return "0 kr";
+  const abs = Math.abs(value);
+  if (abs >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M kr`;
+  if (abs >= 1_000) return `${(value / 1_000).toFixed(1)}k kr`;
+  return `${Math.round(value)} kr`;
+}
+
+function normalizeProbability(rawPrice: number) {
+  if (!Number.isFinite(rawPrice)) return 0.5;
+  if (rawPrice > 1) {
+    return Math.max(0, Math.min(1, rawPrice / 100));
+  }
+  return Math.max(0, Math.min(1, rawPrice));
+}
+
+function clampProbability(value: number) {
+  return Math.max(0.02, Math.min(0.98, value));
+}
+
+function hashString(input: string) {
+  let hash = 0;
+  for (let i = 0; i < input.length; i += 1) {
+    hash = (hash << 5) - hash + input.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function buildMiniSeries(market: Market): number[] {
+  const seed = hashString(market.id);
+  const phase = (seed % 19) * 0.19;
+  const driftSeed = (seed % 27) * 0.08;
+  const base = normalizeProbability(market.yesPrice);
+  const mover = (base - 0.5) * 0.18;
+  const points: number[] = [];
+
+  for (let i = 0; i < 26; i += 1) {
+    const t = i / 25;
+    const wave = Math.sin(t * Math.PI * 2.4 + phase) * 0.05;
+    const micro = Math.cos(t * Math.PI * 5.4 + driftSeed) * 0.015;
+    const drift = (t - 0.5) * mover;
+    points.push(clampProbability(base + wave + micro + drift));
+  }
+
+  return points;
+}
+
+function buildChartPaths(points: number[]): {
+  chartLinePath: string;
+  chartAreaPath: string;
+} {
+  if (points.length === 0) {
+    return { chartLinePath: "", chartAreaPath: "" };
+  }
+
+  const last = points.length - 1;
+  const coords = points.map((value, index) => ({
+    x: last === 0 ? 0 : (index / last) * 100,
+    y: (1 - value) * 100,
+  }));
+
+  const chartLinePath = coords
+    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`)
+    .join(" ");
+  const chartAreaPath = `${chartLinePath} L 100 100 L 0 100 Z`;
+
+  return { chartLinePath, chartAreaPath };
+}
+
+function toCategoryLabel(category: Market["category"]) {
+  if (!category) return "Finance";
+  return category.charAt(0).toUpperCase() + category.slice(1);
+}
+
+function buildWaitlistPreviewMarkets(markets: Market[]): WaitlistPreviewMarket[] {
+  if (markets.length === 0) return [];
+
+  const maxVolume = Math.max(...markets.map((market) => market.volumeKr ?? 0), 1);
+  const ranked = markets
+    .map((market) => {
+      const volume = market.volumeKr ?? 0;
+      const probability = normalizeProbability(market.yesPrice);
+      const mover = Math.round((probability - 0.5) * 200);
+      const trendScore =
+        (volume / maxVolume) * 0.72 +
+        (Math.abs(mover) / 100) * 0.22 +
+        (market.status === "open" ? 0.06 : 0);
+
+      return {
+        market,
+        trendScore,
+        probabilityPct: Math.round(probability * 100),
+        mover,
+        volume,
+      };
+    })
+    .sort((a, b) => b.trendScore - a.trendScore || b.volume - a.volume)
+    .slice(0, 6);
+
+  return ranked.map((item) => {
+    const series = buildMiniSeries(item.market);
+    const { chartLinePath, chartAreaPath } = buildChartPaths(series);
+    return {
+      id: item.market.id,
+      title: item.market.title,
+      category: toCategoryLabel(item.market.category),
+      probabilityPct: item.probabilityPct,
+      mover: item.mover,
+      volume: item.volume,
+      chartLinePath,
+      chartAreaPath,
+    };
+  });
+}
 
 export default function MarketsClientPage({
   waitlistUnlocked,
@@ -20,6 +147,7 @@ export default function MarketsClientPage({
   const [gatePassword, setGatePassword] = useState("");
   const [gateError, setGateError] = useState<string | null>(null);
   const [isUnlocking, setIsUnlocking] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -43,6 +171,29 @@ export default function MarketsClientPage({
       cancelled = true;
     };
   }, []);
+
+  const previewMarkets = useMemo(() => buildWaitlistPreviewMarkets(markets), [markets]);
+
+  useEffect(() => {
+    if (previewMarkets.length === 0) {
+      setPreviewIndex(0);
+      return;
+    }
+
+    setPreviewIndex((current) => current % previewMarkets.length);
+  }, [previewMarkets.length]);
+
+  useEffect(() => {
+    if (isUnlocked || previewMarkets.length < 2) return;
+
+    const timer = window.setInterval(() => {
+      setPreviewIndex((current) => (current + 1) % previewMarkets.length);
+    }, 3800);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [isUnlocked, previewMarkets.length]);
 
   const handleUnlock = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -115,6 +266,71 @@ export default function MarketsClientPage({
                 <strong>{waitlistEmail || "Email on file"}</strong>
               </div>
             </div>
+          </div>
+
+          <div className="marketsGatePreview" aria-live="off">
+            <div className="marketsGatePreviewHeader">
+              <h3>While you wait, think about...</h3>
+              <p>Top trending markets right now</p>
+            </div>
+
+            {previewMarkets.length > 0 ? (
+              <>
+                <div className="marketsGateCarousel">
+                  <div
+                    className="marketsGateCarouselTrack"
+                    style={{ transform: `translateX(-${previewIndex * 100}%)` }}
+                  >
+                    {previewMarkets.map((item) => (
+                      <article key={item.id} className="marketsGateSlide">
+                        <div className="marketsGateSlideTop">
+                          <span className="marketsGateSlideCategory">{item.category}</span>
+                          <span className="marketsGateSlideVolume">{formatKrShort(item.volume)} volume</span>
+                        </div>
+
+                        <h4>{item.title}</h4>
+
+                        <div className="marketsGateSlideStats">
+                          <span>{item.probabilityPct}% yes</span>
+                          <span
+                            className={
+                              item.mover >= 0
+                                ? "marketsGateSlideMove marketsGateSlideMoveUp"
+                                : "marketsGateSlideMove marketsGateSlideMoveDown"
+                            }
+                          >
+                            {item.mover >= 0 ? "+" : ""}
+                            {item.mover} pts
+                          </span>
+                        </div>
+
+                        <div className="marketsGateMiniChart" aria-hidden="true">
+                          <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <path className="marketsGateMiniArea" d={item.chartAreaPath} />
+                            <path className="marketsGateMiniLine" d={item.chartLinePath} />
+                          </svg>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="marketsGateDots" aria-hidden="true">
+                  {previewMarkets.map((item, index) => (
+                    <span
+                      key={`dot-${item.id}`}
+                      className={
+                        index === previewIndex
+                          ? "marketsGateDot marketsGateDotActive"
+                          : "marketsGateDot"
+                      }
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="marketsGatePreviewEmpty">Loading trending markets...</div>
+            )}
           </div>
 
           <div className="marketsGateUnlockDock">
